@@ -1,0 +1,99 @@
+---
+apiVersion: v1
+kind: Pod
+metadata: 
+ name: redis
+ labels: 
+  name: redis
+  tier: db
+spec:
+ containers:
+ - name: redis
+   imagePullPolicy: Always
+   image: redis
+   ports:
+    - containerPort: 3306
+   resources:
+    requests:
+     cpu: "100m"
+     memory: "128Mi"
+   limits:
+     cpu: "100m"
+     memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+ name: redis
+ selector:
+  name: redis
+  tier: frontend
+ ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: redis
+spec:
+ clusterIP: None
+ selector:
+  name: redis
+  tier: db
+ports:
+ - protocol: TCP
+   port: 6379
+   targetport: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis 
+  labels:
+    name: redis 
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    name: redis 
+    tier: db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      name: redis  # has to match .spec.template.metadata.labels
+      tier: db
+  serviceName:: redis "
+  replicas: 3 # by default is 1
+  template:
+    metadata:
+      labels:
+        name: redis  # has to match .spec.selector.matchLabels
+        tier: db
+    spec:
+      containers:
+      - name: redis 
+        image: sekharmanduri/redis:v1 
+        ports:
+        - containerPort: 27017
+          name: redis
+        volumeMounts:
+        - name: redis-volume
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "ebs-sc"
+      resources:
+        requests:
+          storage: 1Gi
