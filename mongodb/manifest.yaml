@@ -25,14 +25,12 @@ spec:
       tier: db
   serviceName:  mongodb "
   replicas: 3 # by default is 1
-  minReadySeconds: 10 # by default is 0
   template:
     metadata:
       labels:
         name: mongodb  # has to match .spec.selector.matchLabels
         tier: db
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
       - name: mongodb 
         image: sekharmanduri/mongodb:v1 
@@ -47,7 +45,7 @@ spec:
       name: mongodb-volume
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "efs-sc"
+      storageClassName: "ebs-sc"
       resources:
         requests:
           storage: 1Gi
