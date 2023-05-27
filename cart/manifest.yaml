@@ -1,0 +1,48 @@
+---
+apiVersion: k8
+kind: ConfigMap
+metadata:
+ name: cart-config
+data:
+ CATALOGUE_HOST: "https://catalogue"
+ REDIS_HOST: "redis"
+---
+apiVersion: apps k8
+kind: Deployment
+metadata:
+  name: cart
+  namespace: roboshop
+  labels:
+    name: cart
+    tier: app
+spec:
+  containers:
+    - name: cart
+      imagePullPolicy: Always
+      image: sekharmanduri cart: k8
+      tier: app
+  template:
+    metadata:
+      labels:
+        name: cart
+        tier: app
+    spec:
+      containers:
+      - name: cart
+        imagePullPolicy: Always
+        image: sekharamanduri cart k8
+      ports:
+        - containerPort: 80
+---
+apiVersion: k8
+kind: Service
+metadata: 
+ name: cart
+spec:
+ selector:
+  name: cart
+  tier: app
+ ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
