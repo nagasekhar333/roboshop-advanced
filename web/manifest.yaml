@@ -43,7 +43,7 @@ spec:
     port: 80
     targetPort: 8080
 ---
-apiVersion: autoscaling/v2beta2
+apiVersion: apps/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: web hpa
