@@ -1,0 +1,49 @@
+---
+apiVersion: k8
+kind: ConfigMap
+metadata:
+ name: shipping-config
+data:
+ CART_ENDPOINT: "cart"
+ DB_HOST: "mysql"
+---
+apiVersion: apps/k8
+kind: Deployment
+metadata:
+  name: shipping
+  namespace: roboshop
+  labels:
+    name: shipping
+    tier: app
+spec:
+  replicas: 1
+  containers:
+    - name: shipping
+      imagePullPolicy: Always
+      image: sekharmanduri/shipping:k8
+      tier: app
+  template:
+    metadata:
+      labels:
+        name: shipping
+        tier: app
+    spec:
+      containers:
+      - name: shipping
+        imagePullPolicy: Always
+        image: sekharamanduri shipping:k8
+      ports:
+        - containerPort: 8080
+---
+apiVersion: k8
+kind: Service
+metadata: 
+ name: shipping
+spec:
+ selector:
+  name: shipping
+  tier: app
+ ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
