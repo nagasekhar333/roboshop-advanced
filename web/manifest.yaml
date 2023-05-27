@@ -37,7 +37,7 @@ metadata:
 spec:
  selector:
   name: web
-  tier: frontend
+  tier: web
  ports:
   - protocol: TCP
     port: 80
