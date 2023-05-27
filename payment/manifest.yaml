@@ -1,0 +1,50 @@
+---
+apiVersion:k8
+kind: ConfigMap
+metadata:
+ name: payment-config
+data:
+ CART_HOST: "cart:80"
+ USER_HOST: "user"
+ AMQP_HOST: "rabbitmq"
+---
+apiVersion: appsk8
+kind: Deployment
+metadata:
+  name: payment
+  namespace: roboshop
+  labels:
+    name: payment
+    tier: app
+spec:
+  replicas: 1
+  containers:
+    - name: payment
+      imagePullPolicy: Always
+      image: sekharmanduri/payment:k8
+      tier: app
+  template:
+    metadata:
+      labels:
+        name: payment
+        tier: app
+    spec:
+      containers:
+      - name: payment
+        imagePullPolicy: Always
+        image: sekharamanduri/paymentk8
+      ports:
+        - containerPort: 8080
+---
+apiVersion:k8
+kind: Service
+metadata: 
+ name: payment
+spec:
+ selector:
+  name: payment
+  tier: app
+ ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
