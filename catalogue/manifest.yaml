@@ -10,10 +10,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: catalogue
+  namespace: roboshop
   labels:
     name: catalogue
     tier: app
 spec:
+  replicas: 1
   containers:
     - name: catalogue
       imagePullPolicy: Always
@@ -30,7 +32,7 @@ spec:
         imagePullPolicy: Always
         image: sekharamanduri/catalogue:v1
       ports:
-        - containerPort: 80
+        - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
